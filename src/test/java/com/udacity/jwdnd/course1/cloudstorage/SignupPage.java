@@ -1,12 +1,11 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
-import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.PageFactory;
 
-public class SignupPage {
+public class SignupPage extends BasePage {
 
     @FindBy(id = "inputFirstName")
     private WebElement inputFirstName;
@@ -20,15 +19,11 @@ public class SignupPage {
     @FindBy(id = "inputPassword")
     private WebElement inputPassword;
 
-    @FindBy(xpath = "//div[@contains(@class, 'alert')]")
-    private WebElement alert;
+    @FindBy(xpath = "//div[contains(@class, 'alert')]//a")
+    private WebElement anchorLogin;
 
     public SignupPage(WebDriver driver) {
         PageFactory.initElements(driver, this);
-    }
-
-    public WebElement getAlert() {
-        return alert;
     }
 
     public void doSignup(String firstname, String lastname, String username, String password) {
@@ -40,6 +35,6 @@ public class SignupPage {
     }
 
     public void goToLoginPage() {
-        alert.findElement(By.xpath("//a")).click();
+        anchorLogin.click();
     }
 }

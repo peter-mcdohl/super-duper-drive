@@ -3,6 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage;
 import io.github.bonigarcia.wdm.WebDriverManager;
 import org.junit.jupiter.api.*;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -55,27 +56,28 @@ class CloudStorageApplicationTests {
 		String username = "jon.snow";
 		String password = "superSecret";
 
+		LoginPage loginPage = new LoginPage(driver);
+		SignupPage signupPage = new SignupPage(driver);
+		HomePage homePage = new HomePage(driver);
+		WebElement marker;
+
 		driver.get("http://localhost:" + this.port + "/login");
 
-		LoginPage loginPage = new LoginPage(driver);
 		loginPage.goToSignupPage();
-
 		Assertions.assertEquals("Sign Up", driver.getTitle());
 
-		SignupPage signupPage = new SignupPage(driver);
 		signupPage.doSignup(firstname, lastname, username, password);
-
-		Assertions.assertTrue(signupPage.getAlert().getText().contains("You successfully signed up!"));
+		marker = signupPage.waitUntil(driver, "//div[contains(@class, 'alert')]");
+		Assertions.assertTrue(marker.getText().contains("You successfully signed up!"));
 
 		signupPage.goToLoginPage();
 		loginPage.doLogin(username, password);
-
+		homePage.waitUntil(driver, "//div[@id='logoutDiv']");
 		Assertions.assertEquals("Home", driver.getTitle());
 
-		HomePage homePage = new HomePage(driver);
 		homePage.doLogout();
-
-		Assertions.assertTrue(loginPage.getAlert().getText().contains("You have been logged out"));
+		marker = loginPage.waitUntil(driver, "//div[contains(@class, 'alert')]");
+		Assertions.assertTrue(marker.getText().contains("You have been logged out"));
 	}
 
 }
