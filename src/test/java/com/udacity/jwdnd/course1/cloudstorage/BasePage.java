@@ -3,6 +3,7 @@ package com.udacity.jwdnd.course1.cloudstorage;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
+import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class BasePage {
@@ -13,4 +14,10 @@ public class BasePage {
         WebDriverWait webDriverWait = new WebDriverWait(webDriver, TIMEOUT);
         return webDriverWait.until(driver -> driver.findElement(By.xpath(xpath)));
     }
+
+    protected WebElement waitUntilVisible(WebDriver webDriver, String xpath) {
+        WebDriverWait webDriverWait = new WebDriverWait(webDriver, TIMEOUT);
+        return webDriverWait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath(xpath)));
+    }
+
 }
