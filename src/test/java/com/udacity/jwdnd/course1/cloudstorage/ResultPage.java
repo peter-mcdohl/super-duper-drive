@@ -7,17 +7,10 @@ import org.openqa.selenium.support.PageFactory;
 
 public class ResultPage extends BasePage {
 
-    public String xpathContainer = "//div[contains(@class, 'container')]";
-
-    @FindBy(xpath = "//div[contains(@class, 'alert')]//a")
-    WebElement anchorContinue;
+    public String xpathAnchorContinue = "//div[contains(@class, 'alert')]//a";
 
     public ResultPage(WebDriver webDriver) {
         PageFactory.initElements(webDriver, this);
-    }
-
-    public void clickContinue() {
-        anchorContinue.click();
     }
 
 }

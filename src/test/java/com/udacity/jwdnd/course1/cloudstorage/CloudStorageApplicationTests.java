@@ -96,6 +96,7 @@ class CloudStorageApplicationTests {
 		SignupPage signupPage = new SignupPage(driver);
 		HomePage homePage = new HomePage(driver);
 		ResultPage resultPage = new ResultPage(driver);
+
 		WebElement marker;
 
 		driver.get("http://localhost:" + this.port + "/signup");
@@ -108,45 +109,45 @@ class CloudStorageApplicationTests {
 		Assertions.assertEquals("Home", driver.getTitle());
 
 		homePage.openTabNotes();
-		marker = homePage.waitUntilVisible(driver, "//div[@id='nav-notes']");
-		Assertions.assertTrue(marker.isDisplayed());
+		Assertions.assertTrue(homePage.isTabUserNoteDisplayed(driver));
 		Assertions.assertEquals(0, homePage.getUserTableItemCount());
 
 		homePage.openFormUserNote();
-		marker = homePage.waitUntilVisible(driver, "//div[@id='noteModal']");
-		Assertions.assertTrue(marker.isDisplayed());
+		Assertions.assertTrue(homePage.isModalUserNoteDisplayed(driver));
 
 		homePage.submitFormUserNote(titleNew, descNew);
-		resultPage.waitUntil(driver, resultPage.xpathContainer);
+		marker = resultPage.waitUntil(driver, resultPage.xpathAnchorContinue);
 		Assertions.assertEquals("Result", driver.getTitle());
+		marker.click(); // click continue
 
-		resultPage.clickContinue();
 		homePage.waitUntil(driver, homePage.xpathLogoutButton);
 		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(homePage.isTabUserNoteDisplayed(driver));
 		Assertions.assertTrue(homePage.isNoteExistsInTable(titleNew, descNew));
 
 		homePage.clickEditUserNoteByTitle(titleNew);
-		marker = homePage.waitUntilVisible(driver, "//div[@id='noteModal']");
-		Assertions.assertTrue(marker.isDisplayed());
-		Assertions.assertEquals(titleNew, homePage.inputNoteTitle.getText());
-		Assertions.assertEquals(descNew, homePage.inputNoteDescription.getText());
+		Assertions.assertTrue(homePage.isModalUserNoteDisplayed(driver));
+		Assertions.assertEquals(titleNew, homePage.inputNoteTitle.getAttribute("value"));
+		Assertions.assertEquals(descNew, homePage.inputNoteDescription.getAttribute("value"));
 
 		homePage.submitFormUserNote(titleEdit, descEdit);
-		resultPage.waitUntil(driver, resultPage.xpathContainer);
+		marker = resultPage.waitUntil(driver, resultPage.xpathAnchorContinue);
 		Assertions.assertEquals("Result", driver.getTitle());
+		marker.click(); // click continue
 
-		resultPage.clickContinue();
 		homePage.waitUntil(driver, homePage.xpathLogoutButton);
 		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(homePage.isTabUserNoteDisplayed(driver));
 		Assertions.assertTrue(homePage.isNoteExistsInTable(titleEdit, descEdit));
 
 		homePage.clickDeleteUserNoteByTitle(titleEdit);
-		resultPage.waitUntil(driver, resultPage.xpathContainer);
+		marker = resultPage.waitUntil(driver, resultPage.xpathAnchorContinue);
 		Assertions.assertEquals("Result", driver.getTitle());
+		marker.click(); // click continue
 
-		resultPage.clickContinue();
 		homePage.waitUntil(driver, homePage.xpathLogoutButton);
 		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(homePage.isTabUserNoteDisplayed(driver));
 		Assertions.assertFalse(homePage.isNoteExistsInTable(titleEdit, descEdit));
 	}
 

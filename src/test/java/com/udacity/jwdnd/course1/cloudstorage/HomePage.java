@@ -1,7 +1,6 @@
 package com.udacity.jwdnd.course1.cloudstorage;
 
 import org.openqa.selenium.By;
-import org.openqa.selenium.Keys;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.FindBy;
@@ -76,7 +75,17 @@ public class HomePage extends BasePage {
     }
 
     public Integer getUserTableItemCount() {
-        return userTable.findElements(By.xpath("//tr")).size();
+        return userTable.findElement(By.tagName("tbody")).findElements(By.tagName("tr")).size();
+    }
+
+    public boolean isTabUserNoteDisplayed(WebDriver driver) {
+        WebElement marker = waitUntilVisible(driver, "//div[@id='nav-notes']");
+        return marker.isDisplayed();
+    }
+
+    public boolean isModalUserNoteDisplayed(WebDriver driver) {
+        WebElement marker = waitUntilVisible(driver, "//div[@id='noteModal']");
+        return marker.isDisplayed();
     }
 
     public void openFormUserNote() {
@@ -84,14 +93,15 @@ public class HomePage extends BasePage {
     }
 
     public void submitFormUserNote(String title, String description) {
-        String ctrlA = Keys.chord(Keys.CONTROL, "a");
-        inputNoteTitle.sendKeys(ctrlA, title);
-        inputNoteDescription.sendKeys(ctrlA, description);
+        inputNoteTitle.clear();
+        inputNoteTitle.sendKeys(title);
+        inputNoteDescription.clear();
+        inputNoteDescription.sendKeys(description);
         inputNoteTitle.submit();
     }
 
     public boolean isNoteExistsInTable(String title, String description) {
-        List<WebElement> rows= userTable.findElements(By.xpath("//table//tbody//tr"));
+        List<WebElement> rows= userTable.findElement(By.tagName("tbody")).findElements(By.tagName("tr"));
 
         for (WebElement row : rows) {
             String rowTitle = row.findElement(By.xpath("//td[2]")).getText();
@@ -106,25 +116,29 @@ public class HomePage extends BasePage {
     }
 
     public void clickEditUserNoteByTitle(String title) {
-        List<WebElement> rows= userTable.findElements(By.xpath("//table//tbody//tr"));
+        List<WebElement> rows= userTable.findElement(By.tagName("tbody")).findElements(By.tagName("tr"));
 
         for (WebElement row : rows) {
             String rowTitle = row.findElement(By.xpath("//td[2]")).getText();
 
             if (rowTitle.equals(title)) {
-                row.findElement(By.xpath("//button[@type='button']")).click();
+                WebElement btn = row.findElement(By.xpath("//td[1]/button[@type='button']"));
+                btn.click();
+                break;
             }
         }
     }
 
     public void clickDeleteUserNoteByTitle(String title) {
-        List<WebElement> rows= userTable.findElements(By.xpath("//table//tbody//tr"));
+        List<WebElement> rows= userTable.findElement(By.tagName("tbody")).findElements(By.tagName("tr"));
 
         for (WebElement row : rows) {
             String rowTitle = row.findElement(By.xpath("//td[2]")).getText();
 
             if (rowTitle.equals(title)) {
-                row.findElement(By.xpath("//a[contains(@class, 'btn')]")).click();
+                WebElement btn = row.findElement(By.tagName("a"));
+                btn.click();
+                break;
             }
         }
     }
