@@ -151,4 +151,77 @@ class CloudStorageApplicationTests {
 		Assertions.assertFalse(homePage.isNoteExistsInTable(titleEdit, descEdit));
 	}
 
+	@Test
+	public void userCredentialsFlow() {
+		String firstname = "Jon";
+		String lastname = "Snow";
+		String username = "jon.snow";
+		String password = "superSecret";
+
+		String credUrlNew = "https://mywebsite.dev/login";
+		String credUsernameNew = "myuser";
+		String credPasswordNew = "mypass";
+		String credUrlEdit = "https://mywebsite.dev/login2";
+		String credUsernameEdit = "myuser2";
+		String credPasswordEdit = "mypass2";
+
+		LoginPage loginPage = new LoginPage(driver);
+		SignupPage signupPage = new SignupPage(driver);
+		HomePage homePage = new HomePage(driver);
+		ResultPage resultPage = new ResultPage(driver);
+
+		WebElement marker;
+
+		driver.get("http://localhost:" + this.port + "/signup");
+		signupPage.doSignup(firstname, lastname, username, password);
+
+		driver.get("http://localhost:" + this.port + "/login");
+		loginPage.doLogin(username, password);
+
+		homePage.waitUntil(driver, homePage.xpathLogoutButton);
+		Assertions.assertEquals("Home", driver.getTitle());
+
+		homePage.openTabCredentials();
+		Assertions.assertTrue(homePage.isTabUserCredentialDisplayed(driver));
+		Assertions.assertEquals(0, homePage.getCredentialTableItemCount());
+
+		homePage.openFormUserCredential();
+		Assertions.assertTrue(homePage.isModalUserCredentialDisplayed(driver));
+
+		homePage.submitFormUserCredential(credUrlNew, credUsernameNew, credPasswordNew);
+		marker = resultPage.waitUntil(driver, resultPage.xpathAnchorContinue);
+		Assertions.assertEquals("Result", driver.getTitle());
+		marker.click(); // click continue
+
+		homePage.waitUntil(driver, homePage.xpathLogoutButton);
+		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(homePage.isTabUserCredentialDisplayed(driver));
+		Assertions.assertTrue(homePage.isCredentialExistsInTable(credUrlNew, credUsernameNew));
+
+		homePage.clickEditUserCredentialByUrl(credUrlNew);
+		Assertions.assertTrue(homePage.isModalUserCredentialDisplayed(driver));
+		Assertions.assertEquals(credUrlNew, homePage.inputCredentialUrl.getAttribute("value"));
+		Assertions.assertEquals(credUsernameNew, homePage.inputCredentialUsername.getAttribute("value"));
+
+		homePage.submitFormUserCredential(credUrlEdit, credUsernameEdit, credPasswordEdit);
+		marker = resultPage.waitUntil(driver, resultPage.xpathAnchorContinue);
+		Assertions.assertEquals("Result", driver.getTitle());
+		marker.click(); // click continue
+
+		homePage.waitUntil(driver, homePage.xpathLogoutButton);
+		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(homePage.isTabUserCredentialDisplayed(driver));
+		Assertions.assertTrue(homePage.isCredentialExistsInTable(credUrlEdit, credUsernameEdit));
+
+		homePage.clickDeleteUserCredentialByUrl(credUrlEdit);
+		marker = resultPage.waitUntil(driver, resultPage.xpathAnchorContinue);
+		Assertions.assertEquals("Result", driver.getTitle());
+		marker.click(); // click continue
+
+		homePage.waitUntil(driver, homePage.xpathLogoutButton);
+		Assertions.assertEquals("Home", driver.getTitle());
+		Assertions.assertTrue(homePage.isTabUserCredentialDisplayed(driver));
+		Assertions.assertFalse(homePage.isCredentialExistsInTable(credUrlEdit, credUsernameEdit));
+	}
+
 }
