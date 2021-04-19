@@ -122,7 +122,8 @@ public class HomePage extends BasePage {
     }
 
     public void openFormUserCredential() {
-        tabPaneCredentials.findElement(By.xpath("//button[@type='button']")).click();
+        WebElement marker = tabPaneCredentials.findElement(By.xpath("//div[@id='nav-credentials']//button[@type='button']"));
+        marker.click();
     }
 
     public void submitFormUserNote(String title, String description) {
@@ -140,7 +141,7 @@ public class HomePage extends BasePage {
         inputCredentialUsername.sendKeys(username);
         inputCredentialPassword.clear();
         inputCredentialPassword.sendKeys(password);
-        buttonCredentialSubmit.click();
+        buttonCredentialSubmit.submit();
     }
 
     public boolean isNoteExistsInTable(String title, String description) {
@@ -216,7 +217,7 @@ public class HomePage extends BasePage {
     }
 
     public void clickDeleteUserCredentialByUrl(String url) {
-        List<WebElement> rows= userTable.findElement(By.tagName("tbody")).findElements(By.tagName("tr"));
+        List<WebElement> rows= credentialTable.findElement(By.tagName("tbody")).findElements(By.tagName("tr"));
 
         for (WebElement row : rows) {
             String rowUrl = row.findElement(By.xpath("//td[2]")).getText();
