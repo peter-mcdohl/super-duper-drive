@@ -5,6 +5,8 @@ import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Notes;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
 import com.udacity.jwdnd.course1.cloudstorage.services.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
@@ -18,6 +20,8 @@ import java.io.IOException;
 @Controller
 @RequestMapping("/")
 public class HomeController {
+
+    private Logger logger = LoggerFactory.getLogger(HomeController.class);
 
     @Autowired
     private UserService userService;
@@ -53,13 +57,18 @@ public class HomeController {
         User currUser = userService.getUser(authentication.getName());
 
         if (currUser != null) {
-            if (notes.getNoteId() == null) {
-                notes.setUserId(currUser.getUserId());
-                notesService.insert(notes);
-            } else {
-                notesService.update(notes);
+            try {
+                if (notes.getNoteId() == null) {
+                    notes.setUserId(currUser.getUserId());
+                    notesService.insert(notes);
+                } else {
+                    notesService.update(notes);
+                }
+
+                model.addAttribute("success", true);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
             }
-            model.addAttribute("success", true);
         }
 
         model.addAttribute("tabName", "nav-notes");
@@ -73,8 +82,12 @@ public class HomeController {
         User currUser = userService.getUser(authentication.getName());
 
         if (currUser != null) {
-            notesService.delete(id);
-            model.addAttribute("success", true);
+            try {
+                notesService.delete(id);
+                model.addAttribute("success", true);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
         }
 
         model.addAttribute("tabName", "nav-notes");
@@ -87,13 +100,17 @@ public class HomeController {
         User currUser = userService.getUser(authentication.getName());
 
         if (currUser != null) {
-            if (credential.getCredentialId() == null) {
-                credential.setUserId(currUser.getUserId());
-                credentialService.insert(credential);
-            } else {
-                credentialService.update(credential);
+            try {
+                if (credential.getCredentialId() == null) {
+                    credential.setUserId(currUser.getUserId());
+                    credentialService.insert(credential);
+                } else {
+                    credentialService.update(credential);
+                }
+                model.addAttribute("success", true);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
             }
-            model.addAttribute("success", true);
         }
 
         model.addAttribute("tabName", "nav-credentials");
@@ -107,8 +124,12 @@ public class HomeController {
         User currUser = userService.getUser(authentication.getName());
 
         if (currUser != null) {
-            credentialService.delete(id);
-            model.addAttribute("success", true);
+            try {
+                credentialService.delete(id);
+                model.addAttribute("success", true);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
         }
 
         model.addAttribute("tabName", "nav-credentials");
@@ -134,8 +155,8 @@ public class HomeController {
             fileService.storeFile(file, currUser.getUserId());
             model.addAttribute("success", true);
             return "result";
-        } catch (IOException e) {
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            logger.error(e.getMessage());
             return "result";
         }
     }
@@ -157,8 +178,12 @@ public class HomeController {
         User currUser = userService.getUser(authentication.getName());
 
         if (currUser != null) {
-            fileService.delete(id);
-            model.addAttribute("success", true);
+            try {
+                fileService.delete(id);
+                model.addAttribute("success", true);
+            } catch (Exception e) {
+                logger.error(e.getMessage());
+            }
         }
 
         model.addAttribute("tabName", "nav-files");
