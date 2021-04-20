@@ -202,6 +202,7 @@ class CloudStorageApplicationTests {
 		Assertions.assertTrue(homePage.isModalUserCredentialDisplayed(driver));
 		Assertions.assertEquals(credUrlNew, homePage.inputCredentialUrl.getAttribute("value"));
 		Assertions.assertEquals(credUsernameNew, homePage.inputCredentialUsername.getAttribute("value"));
+		Assertions.assertEquals(credPasswordNew, homePage.inputCredentialPassword.getAttribute("value"));
 
 		homePage.submitFormUserCredential(credUrlEdit, credUsernameEdit, credPasswordEdit);
 		marker = resultPage.waitUntil(driver, resultPage.xpathAnchorContinue);
