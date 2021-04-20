@@ -4,10 +4,8 @@ import com.udacity.jwdnd.course1.cloudstorage.model.Credential;
 import com.udacity.jwdnd.course1.cloudstorage.model.File;
 import com.udacity.jwdnd.course1.cloudstorage.model.Notes;
 import com.udacity.jwdnd.course1.cloudstorage.model.User;
-import com.udacity.jwdnd.course1.cloudstorage.services.CredentialService;
-import com.udacity.jwdnd.course1.cloudstorage.services.FileService;
-import com.udacity.jwdnd.course1.cloudstorage.services.NotesService;
-import com.udacity.jwdnd.course1.cloudstorage.services.UserService;
+import com.udacity.jwdnd.course1.cloudstorage.services.*;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
@@ -21,17 +19,20 @@ import java.io.IOException;
 @RequestMapping("/")
 public class HomeController {
 
+    @Autowired
     private UserService userService;
+
+    @Autowired
     private FileService fileService;
+
+    @Autowired
     private NotesService notesService;
+
+    @Autowired
     private CredentialService credentialService;
 
-    public HomeController(UserService userService, FileService fileService, NotesService notesService, CredentialService credentialService) {
-        this.userService = userService;
-        this.fileService = fileService;
-        this.notesService = notesService;
-        this.credentialService = credentialService;
-    }
+    @Autowired
+    private EncryptionService encryptionService;
 
     @GetMapping
     public String homeView(Authentication authentication, Model model) {
@@ -41,6 +42,7 @@ public class HomeController {
             model.addAttribute("userFiles", fileService.getUserFiles(currUser.getUserId()));
             model.addAttribute("userNotes", notesService.getUserNotes(currUser.getUserId()));
             model.addAttribute("credentials", credentialService.getUserCredentials(currUser.getUserId()));
+            model.addAttribute("encryptionService", encryptionService);
         }
 
         return "home";
