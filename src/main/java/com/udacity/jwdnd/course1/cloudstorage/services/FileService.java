@@ -26,7 +26,15 @@ public class FileService {
         return fileRespsitory.getUserFiles(userId);
     }
 
-    public Integer storeFile(MultipartFile file, Integer userId) throws IOException {
+    public boolean isFilenameExists(String filename) {
+        return fileRespsitory.getFileByFilename(filename) == null;
+    }
+
+    public Integer storeFile(MultipartFile file, Integer userId) throws Exception {
+        if (!isFilenameExists(file.getOriginalFilename())) {
+            throw new Exception("Filename already exists.");
+        }
+
         InputStream inputStream = file.getInputStream();
         byte[] fileData = new byte[(int) file.getSize()];
         inputStream.read(fileData);

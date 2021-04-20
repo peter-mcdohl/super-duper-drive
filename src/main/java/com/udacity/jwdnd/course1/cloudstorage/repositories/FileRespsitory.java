@@ -11,6 +11,9 @@ public interface FileRespsitory {
     @Select("SELECT * FROM FILES WHERE fileId = #{id}")
     File getFile(Integer id);
 
+    @Select("SELECT * FROM FILES WHERE filename = #{filename}")
+    File getFileByFilename(String filename);
+
     @Select("SELECT * FROM FILES WHERE userid = #{userId}")
     List<File> getUserFiles(Integer userId);
 
