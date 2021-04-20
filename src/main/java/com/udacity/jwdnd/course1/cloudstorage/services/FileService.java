@@ -29,7 +29,7 @@ public class FileService {
     public Integer storeFile(MultipartFile file, Integer userId) throws IOException {
         InputStream inputStream = file.getInputStream();
         byte[] fileData = new byte[(int) file.getSize()];
-        inputStream.read(fileData)
+        inputStream.read(fileData);
 
         File userFile = new File();
         userFile.setFilename(file.getOriginalFilename());
