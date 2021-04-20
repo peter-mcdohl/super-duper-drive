@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class CloudStorageApplicationTests {
 
 	@LocalServerPort
@@ -38,18 +39,21 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(1)
 	public void getLoginPage() {
 		driver.get("http://localhost:" + this.port + "/login");
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
 
 	@Test
+	@Order(2)
 	public void accessUnauthorisedHome() {
 		driver.get("http://localhost:" + this.port + "/");
 		Assertions.assertEquals("Login", driver.getTitle());
 	}
 
 	@Test
+	@Order(3)
 	public void signupFlow() {
 		String firstname = "Jon";
 		String lastname = "Snow";
@@ -81,9 +85,31 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
-	public void userNotesFlow() {
+	@Order(4)
+	public void signupAlreadyExistsFlow() {
 		String firstname = "Jon";
 		String lastname = "Snow";
+		String username = "jon.snow";
+		String password = "superSecret";
+
+		LoginPage loginPage = new LoginPage(driver);
+		SignupPage signupPage = new SignupPage(driver);
+		HomePage homePage = new HomePage(driver);
+		WebElement marker;
+
+		driver.get("http://localhost:" + this.port + "/login");
+
+		loginPage.goToSignupPage();
+		Assertions.assertEquals("Sign Up", driver.getTitle());
+
+		signupPage.doSignup(firstname, lastname, username, password);
+		marker = signupPage.waitUntil(driver, "//div[contains(@class, 'alert')]");
+		Assertions.assertTrue(marker.getText().contains("The username already exists!"));
+	}
+
+	@Test
+	@Order(5)
+	public void userNotesFlow() {
 		String username = "jon.snow";
 		String password = "superSecret";
 
@@ -93,14 +119,10 @@ class CloudStorageApplicationTests {
 		String descEdit = "This is the first note and edited";
 
 		LoginPage loginPage = new LoginPage(driver);
-		SignupPage signupPage = new SignupPage(driver);
 		HomePage homePage = new HomePage(driver);
 		ResultPage resultPage = new ResultPage(driver);
 
 		WebElement marker;
-
-		driver.get("http://localhost:" + this.port + "/signup");
-		signupPage.doSignup(firstname, lastname, username, password);
 
 		driver.get("http://localhost:" + this.port + "/login");
 		loginPage.doLogin(username, password);
@@ -152,9 +174,8 @@ class CloudStorageApplicationTests {
 	}
 
 	@Test
+	@Order(6)
 	public void userCredentialsFlow() {
-		String firstname = "Jon";
-		String lastname = "Snow";
 		String username = "jon.snow";
 		String password = "superSecret";
 
@@ -166,14 +187,10 @@ class CloudStorageApplicationTests {
 		String credPasswordEdit = "mypass2";
 
 		LoginPage loginPage = new LoginPage(driver);
-		SignupPage signupPage = new SignupPage(driver);
 		HomePage homePage = new HomePage(driver);
 		ResultPage resultPage = new ResultPage(driver);
 
 		WebElement marker;
-
-		driver.get("http://localhost:" + this.port + "/signup");
-		signupPage.doSignup(firstname, lastname, username, password);
 
 		driver.get("http://localhost:" + this.port + "/login");
 		loginPage.doLogin(username, password);
